@@ -367,6 +367,76 @@ body:not(.pausado) .arco-faixa{animation:arco 2.4s cubic-bezier(.35,0,.25,1) for
   .sol{animation:none;transform:none;filter:none}
   .cartao{opacity:1;transform:none;transition:none}
 }
+
+/* ===== Salvar na agenda ===== */
+.agenda{display:inline-flex;align-items:center;gap:6px;margin-top:8px;padding:5px 11px 5px 8px;border-radius:999px;background:#fff;
+  border:2px solid var(--grama);color:var(--grama-esc);font-weight:800;font-size:.72rem;letter-spacing:.04em;text-decoration:none;position:relative;z-index:2}
+.item .agenda svg{width:18px;height:18px}
+.agenda:focus-visible{outline:3px solid var(--petala-esc);outline-offset:2px}
+
+/* ===== Lado de fora do jardim: a câmera se afasta e mostra a cerca e o portão ===== */
+.fora{position:relative;margin:2px -20px 0;text-align:center}
+.fora-cena{display:block;width:100%;height:auto;aspect-ratio:400/380}
+.camera{transform-box:view-box;transform-origin:0 0;transform:translate(200px,105px) scale(3) translate(-200px,-105px)}
+.fc-raios{transform-box:fill-box;transform-origin:50% 50%;animation:girar 24s linear infinite}
+.fc-luz{transform-box:fill-box;transform-origin:50% 50%;animation:aura 2.4s ease-in-out infinite}
+.fc-nuvem{animation:fc-nuvem 16s ease-in-out infinite alternate}
+.fc-nuvem.n2{animation-duration:21s;animation-delay:-6s}
+@keyframes fc-nuvem{to{transform:translateX(34px)}}
+.fc-voo{animation:fc-voo 11s linear infinite}
+.fc-voo.v2{animation-duration:14s;animation-delay:-6s}
+@keyframes fc-voo{from{transform:translate(-80px,0)}to{transform:translate(500px,-36px)}}
+.fc-asa{transform-box:fill-box;transform-origin:50% 100%;animation:fc-bater .32s ease-in-out infinite alternate}
+@keyframes fc-bater{to{transform:scaleY(-.5)}}
+.fc-paira{animation:fc-paira 2.6s ease-in-out infinite}
+@keyframes fc-paira{0%,100%{transform:translate(0,0)}50%{transform:translate(5px,-6px)}}
+.portao{cursor:pointer;-webkit-tap-highlight-color:transparent;outline:none}
+.portao:focus-visible .arco-portao{stroke:var(--petala-esc);stroke-width:5}
+.folha-portao{transform-box:fill-box;transition:transform .7s cubic-bezier(.4,1.2,.5,1)}
+.folha-portao.esq{transform-origin:0% 50%}.folha-portao.dir{transform-origin:100% 50%}
+.fora.aberto .folha-portao{transform:scaleX(.12)}
+.dica-portao{font-family:var(--corpo);font-weight:800;font-size:13px;fill:var(--tinta);paint-order:stroke;stroke:#fffdf8;stroke-width:4px;stroke-linejoin:round;opacity:0;transition:opacity .6s}
+.fora.pronto .dica-portao{opacity:1;animation:fc-piscar 2.4s ease-in-out 1.2s infinite}
+@keyframes fc-piscar{0%,100%{opacity:1}50%{opacity:.45}}
+
+/* Plaquinha pendurada na cerca */
+.placa-wrap{display:flex;justify-content:center;margin-top:-18px;position:relative;z-index:2;padding:0 20px}
+.placa{position:relative;max-width:310px;padding:16px 18px 14px;border-radius:10px;text-align:center;
+  background:repeating-linear-gradient(0deg,rgba(255,255,255,0) 0 9px,rgba(150,95,45,.13) 9px 11px),linear-gradient(180deg,#f0c991,#e9bd84);
+  border:3px solid #b9824a;box-shadow:0 8px 16px -8px rgba(90,53,23,.55);
+  transform-origin:50% -20px;transform:translateY(-30px) rotate(-8deg);opacity:0}
+.fora.pronto .placa{animation:pendurar 1.4s cubic-bezier(.3,1.5,.5,1) .3s forwards,balancar 4s ease-in-out 1.8s infinite}
+@keyframes pendurar{0%{opacity:0;transform:translateY(-30px) rotate(-8deg)}40%{opacity:1}100%{opacity:1;transform:none}}
+@keyframes balancar{0%,100%{opacity:1;transform:rotate(-1.6deg)}50%{opacity:1;transform:rotate(1.6deg)}}
+.placa::before,.placa::after{content:"";position:absolute;top:8px;width:7px;height:7px;border-radius:50%;background:#7a4a22}
+.placa::before{left:9px}.placa::after{right:9px}
+.cordas{position:absolute;top:-24px;left:50%;width:170px;height:26px;transform:translateX(-50%);pointer-events:none}
+.placa p{margin:0;color:#5a3517;line-height:1.35}
+.placa .t1{font-family:var(--display);font-weight:700;font-size:1.25rem;margin-bottom:6px}
+.placa .t2{font-size:.95rem}
+
+/* Pix */
+.pix{display:flex;align-items:center;gap:10px;background:#fff;border:2px solid #f5c3d6;border-radius:12px;padding:8px 8px 8px 12px;text-align:left;
+  margin:14px 20px 0;opacity:0;transform:translateY(10px);transition:opacity .6s ease 1.3s,transform .6s ease 1.3s}
+.fora.pronto .pix{opacity:1;transform:none}
+.pix > svg{width:26px;height:26px;flex:none}
+.pix .txt{flex:1;min-width:0}
+.pix small{display:block;font-size:.72rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--tinta-suave)}
+.pix code{font-family:var(--corpo);font-weight:800;font-size:1.05rem;letter-spacing:.06em;color:var(--tinta);font-variant-numeric:tabular-nums}
+.copiar{font:inherit;font-weight:800;font-size:.9rem;color:#fff;background:var(--petala-esc);border:0;border-radius:999px;padding:10px 14px;cursor:pointer;min-height:42px;white-space:nowrap}
+.copiar.ok{background:var(--grama-esc)}
+.copiar:focus-visible{outline:3px solid var(--grama-esc);outline-offset:2px}
+
+/* Clarão ao atravessar o portão */
+.clarao{position:fixed;inset:0;z-index:60;pointer-events:none;opacity:0;
+  background:radial-gradient(circle at 50% 55%,#fffdf6 0%,#fdf3e7 55%,#dff3f6 100%);transition:opacity .55s ease}
+.clarao.on{opacity:1}
+
+@media (prefers-reduced-motion:reduce){
+  .fc-raios,.fc-luz,.fc-nuvem,.fc-voo,.fc-asa,.fc-paira,.fora.pronto .dica-portao{animation:none}
+  .fora.pronto .placa{animation:none;opacity:1;transform:none}
+  .folha-portao,.pix,.clarao,.dica-portao{transition:none}
+}
 </style>
 
 <div class="palco" id="palco">
@@ -501,7 +571,11 @@ body:not(.pausado) .arco-faixa{animation:arco 2.4s cubic-bezier(.35,0,.25,1) for
           </g>
         </svg></span>
         <svg viewBox="0 0 28 28" aria-hidden="true"><rect x="4" y="6" width="20" height="18" rx="4" fill="#a8d892"/><rect x="4" y="6" width="20" height="6" rx="3" fill="var(--grama-esc)"/><circle cx="10" cy="17" r="2" fill="#fff"/><circle cx="18" cy="17" r="2" fill="#fff"/></svg>
-        <div><h3>Quando</h3><p id="c-quando"></p></div>
+        <div><h3>Quando</h3><p id="c-quando"></p>
+        <a class="agenda" id="b-agenda" href="#" aria-label="Salvar o aniversário na agenda do celular">
+          <svg viewBox="0 0 20 20" aria-hidden="true"><rect x="2.5" y="4" width="15" height="13.5" rx="3" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M2.5 8.5h15M6.5 2.5v3M13.5 2.5v3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M10 10.5v4.5M7.75 12.75h4.5" stroke="#e57aa0" stroke-width="1.8" stroke-linecap="round"/></svg>
+          <span>Salvar na agenda</span>
+        </a></div>
       </div>
       <div class="item onde">
         <svg viewBox="0 0 28 28" aria-hidden="true"><path d="M14 3c-5 0-9 4-9 9 0 7 9 13 9 13s9-6 9-13c0-5-4-9-9-9z" fill="var(--petala)"/><circle cx="14" cy="12" r="3.5" fill="#fff"/></svg>
@@ -536,6 +610,112 @@ body:not(.pausado) .arco-faixa{animation:arco 2.4s cubic-bezier(.35,0,.25,1) for
       </div>
     </div>
 
+    <!-- ===== Lado de fora do jardim: cerca, portão, plaquinha dos presentes e Pix ===== -->
+    <div class="fora" id="fora">
+      <svg class="fora-cena" id="fora-cena" viewBox="0 0 400 380" role="group" aria-label="Do lado de fora do jardim da Rebeca: uma cerca, um portão florido e uma plaquinha sobre os presentes">
+        <defs>
+          <linearGradient id="fc-ceu" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="300"><stop offset="0" stop-color="#dff3f6"/><stop offset="1" stop-color="#fdf3e7"/></linearGradient>
+          <clipPath id="fc-recorte"><rect width="400" height="380"/></clipPath>
+        </defs>
+        <g clip-path="url(#fc-recorte)">
+        <g class="camera" id="camera">
+          <rect x="-200" y="-200" width="800" height="800" fill="url(#fc-ceu)"/>
+          <!-- dentro do jardim: sol sorridente -->
+          <g transform="translate(318 64)">
+            <circle class="fc-luz" r="48" fill="url(#brilho-sol)"/>
+            <g class="fc-raios" fill="#ffc93c"><path d="M0 -33 L4 -45 L-4 -45Z"/><path d="M0 -33 L4 -45 L-4 -45Z" transform="rotate(30)"/><path d="M0 -33 L4 -45 L-4 -45Z" transform="rotate(60)"/><path d="M0 -33 L4 -45 L-4 -45Z" transform="rotate(90)"/><path d="M0 -33 L4 -45 L-4 -45Z" transform="rotate(120)"/><path d="M0 -33 L4 -45 L-4 -45Z" transform="rotate(150)"/><path d="M0 -33 L4 -45 L-4 -45Z" transform="rotate(180)"/><path d="M0 -33 L4 -45 L-4 -45Z" transform="rotate(210)"/><path d="M0 -33 L4 -45 L-4 -45Z" transform="rotate(240)"/><path d="M0 -33 L4 -45 L-4 -45Z" transform="rotate(270)"/><path d="M0 -33 L4 -45 L-4 -45Z" transform="rotate(300)"/><path d="M0 -33 L4 -45 L-4 -45Z" transform="rotate(330)"/></g>
+            <circle r="26" fill="#ffd84d" stroke="#f5b82e" stroke-width="2.5"/>
+            <path d="M-11 -5 q4 -5 8 0 M3 -5 q4 -5 8 0" stroke="#7a4a1c" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+            <path d="M-10 6 q10 10 20 0" stroke="#7a4a1c" stroke-width="2.3" fill="none" stroke-linecap="round"/>
+            <circle cx="-14" cy="5" r="3.6" fill="#ff9aa8" opacity=".6"/><circle cx="14" cy="5" r="3.6" fill="#ff9aa8" opacity=".6"/>
+          </g>
+          <!-- nuvenzinhas -->
+          <g class="fc-nuvem"><g transform="translate(70 54) scale(.5)" fill="#ffffff"><ellipse cx="0" cy="10" rx="56" ry="20"/><ellipse cx="-24" cy="0" rx="26" ry="22"/><ellipse cx="10" cy="-10" rx="32" ry="28"/><ellipse cx="38" cy="4" rx="22" ry="18"/></g></g>
+          <g class="fc-nuvem n2"><g transform="translate(196 30) scale(.38)" fill="#ffffff"><ellipse cx="0" cy="10" rx="56" ry="20"/><ellipse cx="-24" cy="0" rx="26" ry="22"/><ellipse cx="10" cy="-10" rx="32" ry="28"/><ellipse cx="38" cy="4" rx="22" ry="18"/></g></g>
+          <!-- arco-íris -->
+          <g fill="none" stroke-width="7" stroke-linecap="round" opacity=".8">
+            <path d="M40 262 A160 160 0 0 1 360 262" stroke="#ff6b6b"/><path d="M47 262 A153 153 0 0 1 353 262" stroke="#ffa94d"/>
+            <path d="M54 262 A146 146 0 0 1 346 262" stroke="#ffd43b"/><path d="M61 262 A139 139 0 0 1 339 262" stroke="#8ce99a"/>
+            <path d="M68 262 A132 132 0 0 1 332 262" stroke="#74c0fc"/><path d="M75 262 A125 125 0 0 1 325 262" stroke="#91a7ff"/>
+            <path d="M82 262 A118 118 0 0 1 318 262" stroke="#d0bfff"/>
+          </g>
+          <!-- passarinhos -->
+          <g transform="translate(0 78)"><g class="fc-voo"><path class="fc-asa" d="M0 0 q5 -6 10 0 q5 -6 10 0" stroke="#5b5770" stroke-width="2" fill="none" stroke-linecap="round"/></g></g>
+          <g transform="translate(0 104) scale(.8)"><g class="fc-voo v2"><path class="fc-asa" d="M0 0 q5 -6 10 0 q5 -6 10 0" stroke="#5b5770" stroke-width="2" fill="none" stroke-linecap="round"/></g></g>
+          <!-- montanhas floridas -->
+          <path d="M-60 200 L20 140 L70 170 L140 110 L205 168 L262 128 L322 172 L380 130 L460 170 V300 H-60Z" fill="#a9c3d8"/>
+          <path d="M-60 222 L50 170 L118 204 L196 150 L268 198 L332 168 L460 204 V300 H-60Z" fill="#94bfa6"/>
+          <path d="M-60 236 Q60 220 140 232 T300 228 T460 232 V300 H-60Z" fill="#8fb39a" opacity=".7"/>
+          <path d="M-60 250 Q100 224 200 242 T460 238 V320 H-60Z" fill="#a8d892"/>
+          <g id="fc-dentro"></g>
+          <!-- flor principal, ao fundo -->
+          <path d="M200 268 C197 236 205 196 200 150" stroke="#4f9a4a" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+          <path d="M201 230 C216 216 234 219 238 226 C227 236 212 237 201 230Z" fill="#7bbf6a"/>
+          <path d="M199 204 C184 190 166 193 162 200 C173 210 188 211 199 204Z" fill="#7bbf6a"/>
+          <g id="fc-petalas"></g>
+          <circle cx="200" cy="136" r="12" fill="#ffd25e"/>
+          <g fill="#e9b23a"><circle cx="196" cy="133" r="1.4"/><circle cx="204" cy="132" r="1.4"/><circle cx="200" cy="140" r="1.4"/></g>
+          <!-- borboleta pousada perto da flor -->
+          <g transform="translate(238 128) scale(.42)"><g class="fc-paira"><g transform="rotate(-12)">
+            <g class="asa esq"><path d="M0 0 C-22 -30 -40 -18 -32 2 C-40 18 -20 28 0 6Z" fill="#9b8cf2"/><circle cx="-20" cy="-8" r="5" fill="#fff" opacity=".7"/></g>
+            <g class="asa dir"><path d="M0 0 C22 -30 40 -18 32 2 C40 18 20 28 0 6Z" fill="#b6a8ff"/><circle cx="20" cy="-8" r="5" fill="#fff" opacity=".7"/></g>
+            <ellipse cx="0" cy="3" rx="3" ry="12" fill="#3b3550"/>
+          </g></g></g>
+          <!-- lado de fora: chão e trilha até o portão -->
+          <path d="M-60 284 Q100 272 200 282 T460 278 V560 H-60Z" fill="#7bbf6a"/>
+          <path d="M176 292 C168 318 150 338 130 384 L270 384 C250 338 232 318 224 292Z" fill="#e9d3ad" opacity=".9"/>
+          <g fill="#d8bf95"><ellipse cx="192" cy="318" rx="6" ry="2.6"/><ellipse cx="212" cy="336" rx="7" ry="3"/><ellipse cx="186" cy="356" rx="8" ry="3.2"/><ellipse cx="214" cy="372" rx="9" ry="3.4"/></g>
+          <!-- cerca (gerada no script) -->
+          <g id="fc-cerca" fill="#fffaf2" stroke="#d9c3a5" stroke-width="1.5"></g>
+          <!-- portão -->
+          <g class="portao" id="portao" tabindex="0" role="button" aria-label="Atravessar o portão e rever a apresentação">
+            <rect x="138" y="150" width="124" height="148" fill="transparent"/>
+            <g fill="#f3e6d3" stroke="#c9a77f" stroke-width="1.5">
+              <rect x="146" y="210" width="12" height="86" rx="3"/><rect x="242" y="210" width="12" height="86" rx="3"/>
+            </g>
+            <circle cx="152" cy="206" r="7" fill="#f6a5c0"/><circle cx="248" cy="206" r="7" fill="#c9b6ff"/>
+            <path class="arco-portao" d="M152 212 Q200 166 248 212" stroke="#5fa957" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+            <g fill="#7bbf6a"><ellipse cx="166" cy="198" rx="5" ry="2.4" transform="rotate(-40 166 198)"/><ellipse cx="234" cy="198" rx="5" ry="2.4" transform="rotate(40 234 198)"/><ellipse cx="188" cy="190" rx="5" ry="2.4" transform="rotate(-15 188 190)"/><ellipse cx="212" cy="190" rx="5" ry="2.4" transform="rotate(15 212 190)"/></g>
+            <g><circle cx="176" cy="194" r="4.2" fill="#f6a5c0"/><circle cx="224" cy="194" r="4.2" fill="#ffd0a6"/><circle cx="176" cy="194" r="1.6" fill="#ffd25e"/><circle cx="224" cy="194" r="1.6" fill="#ffd25e"/></g>
+            <!-- plaquinha do arco -->
+            <path d="M178 172 L188 186 M222 172 L212 186" stroke="#8a5a2b" stroke-width="1.4"/>
+            <rect x="160" y="158" width="80" height="17" rx="5" fill="#e9bd84" stroke="#b9824a" stroke-width="1.6"/>
+            <text x="200" y="170.5" text-anchor="middle" font-family="Grandstander, 'Comic Sans MS', sans-serif" font-weight="700" font-size="10" fill="#5a3517">Jardim da Rebeca</text>
+            <g class="folha-portao esq" fill="#fffaf2" stroke="#d9c3a5" stroke-width="1.5">
+              <path d="M159 294 V228 Q178 214 199 212 V294Z"/>
+              <path d="M166 228 V288 M177 220 V288 M188 215 V288" stroke="#e7d6bd" stroke-width="2"/>
+              <path d="M162 286 L196 230" stroke="#d9c3a5" stroke-width="3"/>
+              <circle cx="193" cy="258" r="2.6" fill="#c9a77f" stroke="none"/>
+            </g>
+            <g class="folha-portao dir" fill="#fffaf2" stroke="#d9c3a5" stroke-width="1.5">
+              <path d="M241 294 V228 Q222 214 201 212 V294Z"/>
+              <path d="M234 228 V288 M223 220 V288 M212 215 V288" stroke="#e7d6bd" stroke-width="2"/>
+              <path d="M238 286 L204 230" stroke="#d9c3a5" stroke-width="3"/>
+              <circle cx="207" cy="258" r="2.6" fill="#c9a77f" stroke="none"/>
+            </g>
+          </g>
+          <!-- flores do lado de fora (brotam quando a câmera se afasta) -->
+          <g id="fc-fora"></g>
+          <text class="dica-portao" x="200" y="370" text-anchor="middle">Toque no portão para rever a apresentação</text>
+        </g>
+        </g>
+      </svg>
+
+      <div class="placa-wrap">
+        <div class="placa">
+          <svg class="cordas" viewBox="0 0 170 26" aria-hidden="true"><path d="M10 26 L22 0 M160 26 L148 0" stroke="#8a5a2b" stroke-width="2" fill="none" stroke-linecap="round"/></svg>
+          <p class="t1">O presente é de livre escolha!</p>
+          <p class="t2">Se for roupinha, eu já visto <b>tamanho 2 anos</b>.<br>Se não tiver ideia, pode ser um Pix. 💐</p>
+        </div>
+      </div>
+
+      <div class="pix">
+        <svg viewBox="0 0 28 28" aria-hidden="true"><path d="M14 2 L26 14 L14 26 L2 14Z" fill="none" stroke="#32bcad" stroke-width="2.6" stroke-linejoin="round"/><path d="M9 14 L14 9 L19 14 L14 19Z" fill="#32bcad"/></svg>
+        <div class="txt"><small>Chave Pix</small><code id="chave-pix">03693751307</code></div>
+        <button class="copiar" id="copiar" type="button" aria-label="Copiar a chave Pix">Copiar</button>
+      </div>
+    </div>
+
     <div class="rsvp" id="rsvp">
       <form id="form-rsvp" novalidate>
         <h2>Confirme sua presença</h2>
@@ -554,10 +734,9 @@ body:not(.pausado) .arco-faixa{animation:arco 2.4s cubic-bezier(.35,0,.25,1) for
         <span class="selo-demo" id="selo-demo" hidden>Prévia: esta confirmação não foi registrada</span>
       </div>
     </div>
-
-    <button class="rever" id="rever" type="button">Ver a animação de novo</button>
   </section>
 </div>
+<div class="clarao" id="clarao" aria-hidden="true"></div>
 
 <script>window.API_URL = "https://script.google.com/macros/s/AKfycbygBnFp0Rz9jqtHdrRoqrq0vHcrWg8Ozd0SmbE_CH6zEgwsK7ersiVY7WxFrMjzc6dmKg/exec"; window.URL_APP = "https://aurelinofreitas.github.io/recepcao-rebeca/";</script>
 <script>/* qrcodejs 1.0.0 (MIT) */
@@ -571,6 +750,14 @@ const CONVITE = {
   local: ["Plus Buffet (Salão Amarelo)", "Rua Costa Barros, 1534 - Aldeota", "Fortaleza/CE"],
   dataCurta: "12/12/2026 às 19h",
   localCurto: "Plus Buffet (Salao Amarelo), Aldeota"
+};
+/* Evento para "Salvar na agenda" (horários em UTC: 19h a 23h em Fortaleza) */
+const EVENTO = {
+  titulo: "Aniversário de 1 ano da Rebeca",
+  inicio: "20261212T220000Z",
+  fim: "20261213T020000Z",
+  local: "Plus Buffet (Salão Amarelo), Rua Costa Barros, 1534 - Aldeota, Fortaleza - CE",
+  descricao: "Venha comemorar o primeiro aninho da Rebeca! Convite: https://aurelinofreitas.github.io/rebeca/"
 };
 /* Preenchido pelo Apps Script quando o convite é aberto pelo link pessoal */
 let CONVIDADO = (typeof window.CONVIDADO === "object" && window.CONVIDADO) ? window.CONVIDADO : null;
@@ -897,10 +1084,13 @@ function iniciar(){
   if(observador){observador.disconnect();observador=null;}  /* evita que os blocos floresçam fora de hora ao rever */
   pararSubida();
   convidadoNoControle=false;
+  armarFora();                        /* a cena da cerca volta ao close-up do jardim */
   document.body.classList.remove("pausado");
   if(reduzido){
     borboleta.setAttribute("transform",`translate(${FIM.x} ${FIM.y})`);
-    cartao.classList.add("visivel");caixas.forEach(c=>c.classList.add("florido"));requestAnimationFrame(beijaFlorEmRepouso);return;
+    cartao.classList.add("visivel");caixas.forEach(c=>c.classList.add("florido"));requestAnimationFrame(beijaFlorEmRepouso);
+    tentarAfastar();
+    return;
   }
   cartao.classList.remove("visivel");
   pararBeijaFlor();
@@ -987,7 +1177,8 @@ som.addEventListener("click",()=>{
     :"M4 9h4l5-4v14l-5-4H4zM16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12");
 });
 
-$("rever").addEventListener("click",()=>{
+/* Rever a apresentação (agora disparado pelo portão do jardim) */
+function reverApresentacao(instantaneo){
   manterTelaAcesa();
   /* reinicia as animações CSS */
   document.querySelectorAll(".haste,.folha,.botao,.miolo,.brilho,.veu,.nuvem,.sol,.chuva,.neve,.monte,.arco-faixa,.arco-iris").forEach(el=>{
@@ -995,10 +1186,10 @@ $("rever").addEventListener("click",()=>{
   });
   montarPetalas();
   montarCanteiro();
-  pararSubida();window.scrollTo({top:0,behavior:"smooth"});
+  pararSubida();window.scrollTo({top:0,behavior:instantaneo?"auto":"smooth"});
   tocar();
   iniciar();
-});
+}
 /* Florzinhas nos cantos das caixinhas */
 const CORES_CANTO=[["#f6a5c0","#e57aa0"],["#c9b6ff","#9b8cf2"],["#ffd0a6","#f2a46b"],["#a7d8ff","#6fb6ea"]];
 function florCanto(par,giro){
@@ -1062,10 +1253,11 @@ addEventListener("resize",()=>{clearTimeout(timerGalhos);timerGalhos=setTimeout(
 function vigiarCaixas(){
   montarTodosGalhos();
   if(observador) observador.disconnect();
-  if(!("IntersectionObserver" in window)){caixas.forEach(c=>c.classList.add("florido"));return;}
+  if(!("IntersectionObserver" in window)){caixas.forEach(c=>c.classList.add("florido"));tentarAfastar();return;}
   observador=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting) e.target.classList.add("florido")}),
     {rootMargin:"-35% 0px -35% 0px",threshold:0});
   caixas.forEach(c=>observador.observe(c));
+  tentarAfastar();
 }
 
 /* A página sobe devagar sozinha; para se o convidado rolar ou tocar */
@@ -1124,6 +1316,129 @@ function subirPagina(){
   subindo=requestAnimationFrame(passo);
 }
 
+/* ===== Lado de fora do jardim: a câmera se afasta, mostra a cerca e o portão ===== */
+const fora=$("fora"), camera=$("camera"), clarao=$("clarao");
+const CAM_PERTO="translate(200px,105px) scale(3) translate(-200px,-105px)";
+const CAM_LONGE="translate(200px,105px) scale(1) translate(-200px,-105px)";
+const camPortao=s=>`translate(200px,250px) scale(${s}) translate(-200px,-250px)`;
+let foraEstado="perto", foraVisivel=false;
+
+(function montarCenaFora(){
+  /* cerca */
+  let c=`<rect x="-60" y="236" width="206" height="8" rx="3"/><rect x="-60" y="268" width="206" height="8" rx="3"/>`+
+        `<rect x="254" y="236" width="206" height="8" rx="3"/><rect x="254" y="268" width="206" height="8" rx="3"/>`;
+  for(let x=-54;x<140;x+=22) c+=`<path d="M${x} 296 V222 L${x+8} 212 L${x+16} 222 V296Z"/>`;
+  for(let x=262;x<460;x+=22) c+=`<path d="M${x} 296 V222 L${x+8} 212 L${x+16} 222 V296Z"/>`;
+  $("fc-cerca").innerHTML=c;
+  /* pétalas da flor principal, ao fundo */
+  let p="";
+  for(let i=0;i<10;i++) p+=`<g transform="rotate(${i*36} 200 136)"><ellipse cx="200" cy="118" rx="9" ry="18" fill="${i%2?"#f6a5c0":"#e57aa0"}"/></g>`;
+  $("fc-petalas").innerHTML=p;
+  /* canteiro dentro do jardim (aparece entre as ripas da cerca) */
+  const rnd=sorteio(2612); let d="";
+  [18,56,96,132,166,234,268,304,344,382].forEach((x,i)=>{
+    d+=flor(x,262+Math.round(rnd()*6),8+rnd()*3,CORES[Math.floor(rnd()*CORES.length)],i%3,0,20+rnd()*12);
+  });
+  $("fc-dentro").innerHTML=d;
+})();
+function plantarFloresFora(){
+  const rnd=sorteio(1212); let g="";
+  [12,50,90,126,274,310,350,390].forEach((x,i)=>{
+    g+=flor(x,320+Math.round(rnd()*24),12+rnd()*5,CORES[Math.floor(rnd()*CORES.length)],(i+1)%3,1.1+rnd()*1.4,30+rnd()*16);
+  });
+  $("fc-fora").innerHTML=g;
+}
+function armarFora(){
+  foraEstado="perto";
+  camera.getAnimations().forEach(a=>a.cancel());
+  camera.style.transform=CAM_PERTO;
+  fora.classList.remove("pronto","aberto");
+  $("fc-fora").innerHTML="";
+}
+/* Só se afasta depois do bloco do mapa, quando a cena estiver na tela */
+function tentarAfastar(){
+  if(foraEstado!=="perto" || !foraVisivel) return;
+  if(!$("cartao").classList.contains("visivel")) return;
+  if(!observador && !reduzido && ("IntersectionObserver" in window)) return;
+  const onde=document.querySelector(".item.onde");
+  foraEstado="aguardando";
+  if(!onde.classList.contains("florido")){ onde.classList.add("florido"); }
+  setTimeout(()=>{ if(foraEstado==="aguardando") afastarCamera(); }, reduzido?0:900);
+}
+async function afastarCamera(){
+  foraEstado="afastando";
+  plantarFloresFora();
+  if(!reduzido){
+    const a=camera.animate([{transform:CAM_PERTO},{transform:CAM_LONGE}],{duration:3000,easing:"cubic-bezier(.55,0,.25,1)",fill:"forwards"});
+    await a.finished.catch(()=>{});
+    if(foraEstado!=="afastando") return;
+  }
+  camera.getAnimations().forEach(a=>a.cancel());
+  camera.style.transform=CAM_LONGE;
+  foraEstado="longe";
+  fora.classList.add("pronto");
+}
+if("IntersectionObserver" in window){
+  new IntersectionObserver(es=>{ foraVisivel=es[0].isIntersecting; tentarAfastar(); },{threshold:.55}).observe($("fora-cena"));
+}else{ foraVisivel=true; }
+
+/* Portão: as folhas se abrem, a câmera atravessa e a apresentação recomeça */
+async function atravessarPortao(){
+  if(foraEstado!=="longe") return;
+  foraEstado="atravessando";
+  fora.classList.add("aberto");
+  await espera(reduzido?0:700);
+  if(!reduzido){
+    camera.style.transform=camPortao(1);
+    const a=camera.animate([{transform:camPortao(1)},{transform:camPortao(7)}],{duration:1200,easing:"cubic-bezier(.6,0,.8,.4)",fill:"forwards"});
+    setTimeout(()=>clarao.classList.add("on"),650);
+    await a.finished.catch(()=>{});
+  }else clarao.classList.add("on");
+  await espera(300);
+  reverApresentacao(true);
+  await espera(150);
+  clarao.classList.remove("on");
+}
+$("portao").addEventListener("click",atravessarPortao);
+$("portao").addEventListener("keydown",e=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); atravessarPortao(); } });
+
+/* Pix: copia a chave */
+$("copiar").addEventListener("click",async()=>{
+  const chave=$("chave-pix").textContent.trim(); let ok=false;
+  try{ await navigator.clipboard.writeText(chave); ok=true; }catch(e){
+    const t=document.createElement("textarea"); t.value=chave; t.setAttribute("readonly",""); t.style.cssText="position:fixed;opacity:0";
+    document.body.appendChild(t); t.select(); try{ ok=document.execCommand("copy"); }catch(_){} t.remove();
+  }
+  const b=$("copiar"); b.textContent=ok?"Copiado! ✓":"Copie à mão"; b.classList.toggle("ok",ok);
+  try{ if(ok && navigator.vibrate) navigator.vibrate(40); }catch(e){}
+  setTimeout(()=>{ b.textContent="Copiar"; b.classList.remove("ok"); },2200);
+});
+
+/* Salvar na agenda: arquivo .ics no iPhone/Mac, Google Agenda nos demais */
+$("b-agenda").addEventListener("click",e=>{
+  e.preventDefault(); e.stopPropagation();
+  const apple=/iPhone|iPad|iPod|Macintosh/.test(navigator.userAgent);
+  if(apple){
+    const esc=t=>String(t).replace(/\\/g,"\\\\").replace(/([,;])/g,"\\$1");
+    const ics=["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//Convite Rebeca//PT-BR","CALSCALE:GREGORIAN","BEGIN:VEVENT",
+      "UID:rebeca-1-ano-20261212@aurelinofreitas.github.io","DTSTAMP:20261101T120000Z",
+      "DTSTART:"+EVENTO.inicio,"DTEND:"+EVENTO.fim,"SUMMARY:"+esc(EVENTO.titulo),
+      "LOCATION:"+esc(EVENTO.local),"DESCRIPTION:"+esc(EVENTO.descricao),
+      "BEGIN:VALARM","TRIGGER:-P1D","ACTION:DISPLAY","DESCRIPTION:"+esc("Amanhã é o aniversário da Rebeca!"),"END:VALARM",
+      "END:VEVENT","END:VCALENDAR"].join("\r\n");
+    const url=URL.createObjectURL(new Blob([ics],{type:"text/calendar;charset=utf-8"}));
+    const a=document.createElement("a"); a.href=url; a.download="aniversario-rebeca.ics";
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),5000);
+  }else{
+    const u="https://calendar.google.com/calendar/render?action=TEMPLATE"+
+      "&text="+encodeURIComponent(EVENTO.titulo)+"&dates="+EVENTO.inicio+"/"+EVENTO.fim+
+      "&location="+encodeURIComponent(EVENTO.local)+"&details="+encodeURIComponent(EVENTO.descricao)+"&ctz=America/Fortaleza";
+    window.open(u,"_blank","noopener");
+  }
+});
+
+armarFora();
 document.body.classList.add("pausado");
 </script>
 
