@@ -744,7 +744,7 @@ body:not(.pausado) .arco-faixa{animation:arco 2.4s cubic-bezier(.35,0,.25,1) for
         <div class="acomp" id="acomp" hidden>
           <form id="form-acomp" novalidate>
             <p class="acomp-titulo">E quem você vai levar?</p>
-            <p class="acomp-dica">Escreva o nome de cada acompanhante. Se for só você, toque em “Vou sozinho(a)”.</p>
+            <p class="acomp-dica">Cada convite vale para até <b>3 pessoas</b>: você e mais 2 acompanhantes. Se for só você, toque em “Vou sozinho(a)”.</p>
             <div id="acomp-lista"></div>
             <button class="acomp-mais" id="acomp-mais" type="button">+ Adicionar outra pessoa</button>
             <button class="confirmar" id="acomp-salvar" type="submit">Salvar acompanhantes</button>
@@ -905,7 +905,7 @@ function chuvaDePetalas(){
   setTimeout(()=>box.remove(),7500);
 }
 /* ===== Acompanhantes ===== */
-const MAX_ACOMP=5;
+const MAX_ACOMP=2;   /* o convidado + até 2 acompanhantes = 3 pessoas */
 /* Redesenha os galhos da caixinha quando a altura muda */
 function ajustarGalhos(){ requestAnimationFrame(()=>{ try{ montarGalhos($("rsvp"),caixas.indexOf($("rsvp"))); }catch(e){} }); }
 function linhaAcomp(valor){
