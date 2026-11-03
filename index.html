@@ -197,6 +197,20 @@ body.pausado .cena .chuva .gota{animation-play-state:running!important}
 .ing-info b{color:var(--tinta);letter-spacing:.08em}
 .ingresso small{color:var(--tinta-suave);font-size:.85rem;max-width:32ch}
 .selo-demo{font-size:.72rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#9b8cf2}
+/* Acompanhantes */
+.acomp{width:100%;background:#fff;border:2px solid #f5c3d6;border-radius:14px;padding:12px;text-align:left;margin:2px 0 4px}
+.acomp form{display:flex;flex-direction:column;gap:8px}
+.acomp-titulo{margin:0;font-family:var(--display);font-weight:700;font-size:1.15rem;color:var(--petala-esc);text-align:center}
+.acomp-dica{margin:0;font-size:.85rem;color:var(--tinta-suave);text-align:center;line-height:1.35}
+#acomp-lista{display:flex;flex-direction:column;gap:6px}
+.acomp-linha{display:flex;gap:6px}
+.acomp-linha input{flex:1}
+.acomp-tirar{flex:none;width:44px;border:0;border-radius:12px;background:#fdeef4;color:#b8325a;font:inherit;font-size:1.3rem;font-weight:800;cursor:pointer}
+.acomp-mais{font:inherit;font-weight:800;font-size:.9rem;color:var(--grama-esc);background:none;border:2px dashed var(--grama);border-radius:12px;padding:9px;cursor:pointer}
+.acomp-ok{display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center}
+.acomp-ok p{margin:0;font-size:.95rem;color:var(--tinta);line-height:1.4}
+.acomp-ok p b{color:var(--petala-esc)}
+.acomp-tirar:focus-visible,.acomp-mais:focus-visible{outline:3px solid var(--petala-esc);outline-offset:2px}
 
 /* Galhos que crescem entre as flores das bordas */
 .caixa > svg.galhos{position:absolute;left:0;top:0;width:100%;height:100%;overflow:visible;pointer-events:none;z-index:0}
@@ -727,6 +741,21 @@ body:not(.pausado) .arco-faixa{animation:arco 2.4s cubic-bezier(.35,0,.25,1) for
       </form>
       <div class="ingresso" id="ingresso" hidden>
         <p class="ing-titulo" id="ing-titulo">Seu lugar no jardim da Rebeca está garantido!</p>
+        <div class="acomp" id="acomp" hidden>
+          <form id="form-acomp" novalidate>
+            <p class="acomp-titulo">E quem você vai levar?</p>
+            <p class="acomp-dica">Escreva o nome de cada acompanhante. Se for só você, toque em “Vou sozinho(a)”.</p>
+            <div id="acomp-lista"></div>
+            <button class="acomp-mais" id="acomp-mais" type="button">+ Adicionar outra pessoa</button>
+            <button class="confirmar" id="acomp-salvar" type="submit">Salvar acompanhantes</button>
+            <button class="recusar" id="acomp-so" type="button">Vou sozinho(a)</button>
+            <p class="aviso" id="acomp-aviso" role="status"></p>
+          </form>
+          <div class="acomp-ok" id="acomp-ok" hidden>
+            <p id="acomp-resumo"></p>
+            <button class="recusar" id="acomp-editar" type="button">Alterar acompanhantes</button>
+          </div>
+        </div>
         <div class="moldura-folhas" id="moldura-folhas"><div id="qrcode" role="img" aria-label="QR Code de entrada na festa"></div></div>
         <p class="ing-nome" id="ing-nome"></p>
         <p class="ing-info" id="ing-info"></p>
@@ -774,12 +803,15 @@ const temServidor = !!(window.google && google.script && google.script.run);
 const fRsvp=$("form-rsvp"), rNome=$("r-nome"), rAviso=$("r-aviso");
 const bConf=$("r-confirmar"), bRec=$("r-recusar");
 let saudacaoFeita=false;
+/* "Aurelino Freitas (Rebeca, Judite)" -> nome "Aurelino Freitas" e acompanhantes ["Rebeca","Judite"] */
+function nomeBase(n){ return String(n||"").replace(/\s*\([^()]*\)\s*$/,"").trim(); }
+function acompDoNome(n){ const m=String(n||"").match(/\(([^()]*)\)\s*$/); return m?m[1].split(",").map(s=>s.trim()).filter(Boolean):[]; }
 function personalizar(){
   if(!CONVIDADO || !CONVIDADO.nome) return;
-  rNome.value=CONVIDADO.nome; rNome.readOnly=true;
+  rNome.value=nomeBase(CONVIDADO.nome); rNome.readOnly=true;
   if(!saudacaoFeita && !$("cartao").classList.contains("visivel")){
     saudacaoFeita=true;
-    const primeiro=String(CONVIDADO.nome).trim().split(/\s+/)[0];
+    const primeiro=nomeBase(CONVIDADO.nome).split(/\s+/)[0];
     const ch=$("chamada"), sauda=document.createElement("span");
     sauda.className="linha"; sauda.textContent="Olá, "+primeiro+"!";
     ch.insertBefore(document.createTextNode(" "),ch.firstChild); ch.insertBefore(sauda,ch.firstChild);
@@ -801,13 +833,23 @@ function florescerRsvp(){
   const c=$("rsvp"); c.classList.remove("florido"); void c.offsetWidth;
   setTimeout(()=>c.classList.add("florido"),80);
 }
-function mostrarIngresso(r){
-  fRsvp.hidden=true; $("ingresso").hidden=false;
-  $("ing-titulo").textContent="Seu lugar no jardim da Rebeca está garantido!";
-  $("ing-nome").textContent=r.nome;
+let ingressoAtual=null;
+function infoIngresso(){
+  const r=ingressoAtual; if(!r) return;
+  $("ing-nome").textContent=nomeBase(r.nome);
   $("ing-info").innerHTML="";
   $("ing-info").append("Código de entrada ");
   const b=document.createElement("b"); b.textContent=r.entrada; $("ing-info").append(b);
+  const n=1+(r.acompanhantes||[]).length;
+  if(n>1) $("ing-info").append(" · "+n+" pessoas");
+}
+function mostrarIngresso(r,primeiraVez){
+  fRsvp.hidden=true; $("ingresso").hidden=false;
+  $("ing-titulo").textContent="Seu lugar no jardim da Rebeca está garantido!";
+  ingressoAtual=Object.assign({},r,{acompanhantes:Array.isArray(r.acompanhantes)?r.acompanhantes:acompDoNome(r.nome)});
+  infoIngresso();
+  if(primeiraVez && !ingressoAtual.acompanhantes.length) abrirAcomp([]);
+  else mostrarAcompSalvos();
   $("qrcode").innerHTML=""; $("qrcode").hidden=false; $("ing-dica").hidden=false;
   try{ new QRCode($("qrcode"),{text:textoIngresso(r),width:340,height:340,colorDark:"#3b3550",colorLight:"#ffffff",correctLevel:QRCode.CorrectLevel.M}); }
   catch(e){ $("qrcode").textContent="QR Code indisponível. Mostre o código "+r.entrada+" na entrada."; }
@@ -818,7 +860,8 @@ function mostrarIngresso(r){
 function mostrarRecusa(r){
   fRsvp.hidden=true; $("ingresso").hidden=false;
   $("ing-titulo").textContent="Que pena!";
-  $("ing-nome").textContent=r.nome;
+  $("acomp").hidden=true;
+  $("ing-nome").textContent=nomeBase(r.nome);
   $("ing-info").textContent="Sua resposta foi registrada. Obrigado por avisar, vamos sentir sua falta.";
   $("qrcode").hidden=true; $("ing-dica").hidden=true;
   $("selo-demo").hidden=!r.demo;
@@ -861,12 +904,69 @@ function chuvaDePetalas(){
   box.innerHTML=html; document.body.appendChild(box);
   setTimeout(()=>box.remove(),7500);
 }
+/* ===== Acompanhantes ===== */
+const MAX_ACOMP=5;
+/* Redesenha os galhos da caixinha quando a altura muda */
+function ajustarGalhos(){ requestAnimationFrame(()=>{ try{ montarGalhos($("rsvp"),caixas.indexOf($("rsvp"))); }catch(e){} }); }
+function linhaAcomp(valor){
+  const lista=$("acomp-lista"); if(lista.children.length>=MAX_ACOMP) return null;
+  const d=document.createElement("div"); d.className="acomp-linha";
+  const i=document.createElement("input"); i.type="text"; i.maxLength=40; i.autocomplete="off";
+  i.placeholder="Nome do acompanhante"; i.value=valor||"";
+  i.setAttribute("aria-label","Nome do acompanhante "+(lista.children.length+1));
+  const x=document.createElement("button"); x.type="button"; x.className="acomp-tirar"; x.textContent="×";
+  x.setAttribute("aria-label","Remover este acompanhante");
+  x.addEventListener("click",()=>{ d.remove(); if(!lista.children.length) linhaAcomp(); $("acomp-mais").hidden=lista.children.length>=MAX_ACOMP; ajustarGalhos(); });
+  d.append(i,x); lista.appendChild(d);
+  $("acomp-mais").hidden=lista.children.length>=MAX_ACOMP;
+  ajustarGalhos();
+  return i;
+}
+function abrirAcomp(lista){
+  $("acomp").hidden=false; $("form-acomp").hidden=false; $("acomp-ok").hidden=true; $("acomp-aviso").textContent="";
+  $("acomp-lista").innerHTML=""; (lista&&lista.length?lista:[""]).forEach(v=>linhaAcomp(v));
+  ajustarGalhos();
+}
+function mostrarAcompSalvos(){
+  const lista=(ingressoAtual&&ingressoAtual.acompanhantes)||[];
+  $("acomp").hidden=false; $("form-acomp").hidden=true; $("acomp-ok").hidden=false;
+  const p=$("acomp-resumo"); p.innerHTML="";
+  if(lista.length){ p.append("Com você: "); const b=document.createElement("b"); b.textContent=lista.join(", "); p.append(b); $("acomp-editar").textContent="Alterar acompanhantes"; }
+  else { p.textContent="Vai levar alguém com você?"; $("acomp-editar").textContent="Adicionar acompanhantes"; }
+  ajustarGalhos();
+}
+function enviarAcomp(lista){
+  if(!ingressoAtual) return;
+  const aviso=$("acomp-aviso"), botoes=[$("acomp-salvar"),$("acomp-so")];
+  const dados={entrada:ingressoAtual.entrada,codigo:ingressoAtual.codigo||"",acompanhantes:lista};
+  aviso.textContent="Salvando..."; botoes.forEach(b=>b.disabled=true);
+  const ok=r=>{ botoes.forEach(b=>b.disabled=false); aviso.textContent="";
+    ingressoAtual.acompanhantes=(r&&Array.isArray(r.acompanhantes))?r.acompanhantes:lista;
+    infoIngresso(); mostrarAcompSalvos(); };
+  const falha=()=>{ botoes.forEach(b=>b.disabled=false); aviso.textContent="Não foi possível salvar agora. Verifique a internet e tente de novo."; };
+  if(temServidor){
+    google.script.run.withSuccessHandler(ok).withFailureHandler(falha).registrarAcompanhantes(dados);
+  }else if(API_URL && !ingressoAtual.demo){
+    fetch(API_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(Object.assign({acao:"acompanhantes"},dados))})
+      .then(r=>r.json()).then(j=>{ if(j&&j.ok) ok(j.resultado); else falha(); }).catch(falha);
+  }else setTimeout(()=>ok({acompanhantes:lista}),400);
+}
+$("acomp-mais").addEventListener("click",()=>{ const i=linhaAcomp(); if(i) i.focus(); });
+$("form-acomp").addEventListener("submit",e=>{
+  e.preventDefault();
+  const lista=[...$("acomp-lista").querySelectorAll("input")].map(i=>i.value.replace(/[(),]/g," ").replace(/\s+/g," ").trim()).filter(v=>v.length>=2);
+  if(!lista.length){ $("acomp-aviso").textContent="Escreva pelo menos um nome, ou toque em “Vou sozinho(a)”."; const i=$("acomp-lista").querySelector("input"); if(i) i.focus(); return; }
+  enviarAcomp(lista);
+});
+$("acomp-so").addEventListener("click",()=>enviarAcomp([]));
+$("acomp-editar").addEventListener("click",()=>abrirAcomp((ingressoAtual&&ingressoAtual.acompanhantes)||[]));
+
 function enviar(resposta){
   const nome=rNome.value.trim().replace(/\s+/g," ");
   if(nome.length<3){ rAviso.textContent="Escreva seu nome para confirmar."; rNome.focus(); return; }
   const dados={codigo:CONVIDADO&&CONVIDADO.codigo?CONVIDADO.codigo:"",nome:nome,pessoas:1,resposta:resposta};
   rAviso.textContent="Enviando..."; bConf.disabled=bRec.disabled=true;
-  const ok=r=>{ bConf.disabled=bRec.disabled=false; rAviso.textContent=""; (r.resposta==="Não"?mostrarRecusa:mostrarIngresso)(r); if(r.resposta!=="Não") chuvaDePetalas(); };
+  const ok=r=>{ bConf.disabled=bRec.disabled=false; rAviso.textContent=""; if(r.resposta==="Não") mostrarRecusa(r); else mostrarIngresso(Object.assign({codigo:dados.codigo},r),true); if(r.resposta!=="Não") chuvaDePetalas(); };
   const falha=()=>{ bConf.disabled=bRec.disabled=false; rAviso.textContent="Não foi possível enviar agora. Verifique a internet e tente de novo."; };
   if(temServidor){
     google.script.run.withSuccessHandler(ok).withFailureHandler(falha).registrarResposta(dados);
@@ -882,7 +982,7 @@ fRsvp.addEventListener("submit",e=>{e.preventDefault();enviar("Sim");});
 bRec.addEventListener("click",()=>enviar("Não"));
 function ingressoSalvo(){
   if(CONVIDADO && CONVIDADO.confirmado==="Sim" && CONVIDADO.entrada){
-    mostrarIngresso({nome:CONVIDADO.nome,pessoas:CONVIDADO.pessoas||1,entrada:CONVIDADO.entrada});
+    mostrarIngresso({nome:CONVIDADO.nome,pessoas:CONVIDADO.pessoas||1,entrada:CONVIDADO.entrada,codigo:CONVIDADO.codigo});
     $("rsvp").classList.remove("florido");
   }
 }

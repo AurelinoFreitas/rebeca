@@ -1,5 +1,5 @@
 /* Guarda o convite no aparelho para abrir rápido, sempre buscando a versão mais nova primeiro. */
-const CACHE = "rebeca-convite-v2";
+const CACHE = "rebeca-convite-v3";
 const ARQUIVOS = ["./", "index.html", "musica.mp3", "rebeca-foto.jpg", "icon-192.png", "icon-512.png", "manifest.webmanifest"];
 self.addEventListener("install", e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(ARQUIVOS)).then(() => self.skipWaiting())); });
 self.addEventListener("activate", e => {
